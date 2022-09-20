@@ -29,6 +29,7 @@ Options:
 ## Practical Use
 
 You need to setup your host to response to http/s queries $_POST['op'] = "d3bug".
+
 On this response, the text used with -n need to be displayed to validated domain fronting.
 
 your target list(cat list or -u) and your host (-f), must be used without scheme.
