@@ -1,43 +1,34 @@
-# firecheck
+# multifronting
 
-A tool written in go to check permissions (R W D) on firebase instances.
+A tool written in go to check for valid domain fronting
 
 ## Installing
 
 Requires [Go](https://golang.org/dl/)
 
-`go get -u github.com/bp0lr/firecheck`
+`go install -v github.com/bp0lr/multifronting@latest`
+
 
 ## How To Use:
 
 Examples: 
-- `firecheck -u "https://testdb-1ec08.firebaseio.com"`
-- `firecheck -u "https://testdb-1ec08.firebaseio.com" -H "foo: bar" -o result.txt -s`
-- `cat urls.txt | firecheck -o result.txt -s`
+- `cat domains\live.com.txt | multifronting -f something.azureedge.net -n yourstring -o output.txt --use-pb`
 
 Options:
 ```
--H, --header stringArray   Add custom Headers to the request
--o, --output string        Output file to save the results to
--p, --proxy string         Add a HTTP proxy
--r, --random-agent         Set a random User Agent
--s, --simple               Display only the url without R W D
--u, --url string           The firebase url to test
--m, --user string          Add your username for write POC
--v, --verbose              Display extra info about what is going on
--w, --workers int          Workers amount (default 50)
+-f, --fronturl string   your host
+-n, --needle string     the string to confirm that fronting works
+-o, --output string     Output file to save the results to
+-p, --proxy string      Add a HTTP proxy
+-u, --testurl string    host to test
+    --use-pb            use a progress bar
+-v, --verbose           Display extra info about what is going on
+-w, --workers int       Workers amount (default 50)
 ```
 
 ## Practical Use
 
-Try this tool in conbination with others for max results.
+You need to setup your host to response to http/s queries $_POST['op'] = "d3bug".
+On this response, the text used with -n need to be displayed to validated domain fronting.
 
-one line example:
-  - getJS (https://github.com/003random/getJS)
-  - fget (https://github.com/bp0lr/fget)
-  - gf (https://github.com/tomnomnom/gf)
-  - js-beautify (npm js-beautify)
-  - httpx (https://github.com/projectdiscovery/httpx)
-
-```cat urls.txt | getJS --complete --resolve | fget -w 50 -r -f -o . && find results/ -iname '*.js' -exec bash -c "js-beautify --quiet -o {}.ok.js {} > /dev/null 2>&1" \; && find results/ -type f -name "*.js" \! -name "*.ok.js" -exec rm -f {} \; && for D in `find results/ -type d`; do for file in `find ${D} -type f`; do gf firebase_secrets ${file} | awk -F: '{print $3}'  >> gf.txt; done; done && cat gf.txt | httpx -silent | firecheck -v -o firebase.txt```
-"# multifronting" 
+your target list(cat list or -u) and your host (-f), must be used without scheme.
